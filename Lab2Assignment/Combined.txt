@@ -182,6 +182,7 @@ int main() {
     printf("\n-----STACK IMPLEMENTAION-----\n");
     head = NULL;
     tail = NULL;
+    length = 0;
     printf("Enter your choice: \n1. Push\n2. Pop\n3. Display\n4. Exit\n");
     scanf("%d", &choice);
     
@@ -205,6 +206,7 @@ int main() {
     printf("\n-----QUEUE IMPLEMENTAION-----\n");
     head = NULL;
     tail = NULL;
+    length = 0;
     printf("Enter your choice: \n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n");
     scanf("%d", &choice);
     

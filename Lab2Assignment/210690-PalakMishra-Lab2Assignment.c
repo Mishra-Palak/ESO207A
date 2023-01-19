@@ -1,3 +1,6 @@
+//Palak Mishra
+//Roll No - 210690
+
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -176,7 +176,6 @@ int main() {
             }
             
             //Heap Sort Conclusion
-            //Insertion Sort Conclusion
             
             if (wish == 'y' || wish == 'Y') {
                 t = clock() - t;

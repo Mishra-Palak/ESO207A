@@ -337,8 +337,6 @@ int main() {
                         }
                     }
                 }
-                
-                //check for 1 item waala case
             }
             
             //Bucket Sort Conclusion

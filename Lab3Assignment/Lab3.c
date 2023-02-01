@@ -10,7 +10,7 @@ struct Node {
     struct Node* next;
 };
 
-void enQueue(struct Node** head, struct Node**tail, int item) {
+void enQueue(struct Node** head, struct Node** tail, int item) {
     if (*head == NULL) {
         struct Node* newN = (struct Node*)malloc(sizeof(struct Node));
         newN->data = item;

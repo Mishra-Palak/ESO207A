@@ -1,7 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <time.h>
+#include <math.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void enQueue(struct Node** head, struct Node**tail, int item) {
+    if (*head == NULL) {
+        struct Node* newN = (struct Node*)malloc(sizeof(struct Node));
+        newN->data = item;
+        newN->next = NULL;
+        *head = newN;
+        *tail = *head;
+    } else {
+        struct Node* newN = (struct Node*)malloc(sizeof(struct Node));
+        newN->data = item;
+        newN->next = NULL;
+        (*tail)->next = newN;
+        *tail = newN;
+    }
+}
+
+void insertionSort(struct Node** head, struct Node** sorted) {
+    struct Node* key = *head;
+    
+    while(key != NULL) {
+        struct Node* nextN = key->next;
+        
+        if (*sorted == NULL || (*sorted)->data >= key->data) {
+            key->next = *sorted;
+            *sorted = key;
+        } else {
+            struct Node* current = *sorted;
+            while(current->next != NULL && current->next->data < key->data) {
+                current = current->next;
+            }
+            key->next = current->next;
+            current->next = key;
+        }
+        
+        key = nextN;
+    }
+    
+    *head = *sorted;
+}
+
+void display(struct Node** head, int i) {
+    if (*head == NULL) {
+        printf("Queue %d - Empty Queue\n", i+1);
+        return;
+    }
+    printf("Queue %d - ", i+1);
+    struct Node* current = *head;
+    while(current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
 
 void randomNumberGenerator(int N) {
     FILE * random = fopen("random.txt", "w");
@@ -19,7 +80,7 @@ void randomNumberGenerator(int N) {
     
     srand(time(0));
     for (int i = 0; i < N; i++) {
-        int x = rand()%1000;
+        int x = rand()%1000000; //0 to 9999
         fprintf(random, "%d ", x);
     }
     
@@ -61,7 +122,7 @@ int main() {
         if (choice == 'Y' || choice == 'y') {
             clock_t t;
             double time_taken;
-            printf("\n-----INSERTION SORT-----\n");
+            printf("\n-----INSERTION SORT-----\n"); //Best - O(n), Avg - O(n^2), Worst - O(n^2)
             int B[N];
             for (int i = 0; i < N; i++) B[i] = A[i];
             
@@ -123,7 +184,7 @@ int main() {
         if (choice == 'Y' || choice == 'y') {
             clock_t t;
             double time_taken;
-            printf("\n-----HEAP SORT-----\n");
+            printf("\n-----HEAP SORT-----\n"); //Best - O(nlogn), Avg - O(nlogn), Worst - O(nlogn)
             int B[N];
             for (int i = 0; i < N; i++) B[i] = A[i];
             
@@ -141,9 +202,9 @@ int main() {
             }
             
             //Heap Sort Commencement
-            //Map Heap - Ascending order, Min Heap - Descending order
+            //Max Heap - Ascending order, Min Heap - Descending order
             
-            //heapify
+            //Heapify
             for (int i = 1; i < N; i++) {
                 if (B[i] > B[(i-1)/2]) {
                     int j = i;
@@ -156,7 +217,7 @@ int main() {
                 }
             }
             
-            //sort
+            //Sort
             for (int i = N-1; i > 0; i--) {
                 int temp = B[0];
                 B[0] = B[i];
@@ -201,5 +262,125 @@ int main() {
         else printf("Wrong Input! Enter again.\n\n");
     }
     
-    printf("\n-----TASK DONE-----\n");
+    printf("\n");
+    choice = 'a';
+    while(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n') {
+        printf("Do you want to sort using BUCKET SORT? (Y/N): ");
+        scanf(" %c", &choice);
+        
+        if (choice == 'Y' || choice == 'y') {
+            clock_t t;
+            double time_taken;
+            printf("\n-----BUCKET SORT-----\n"); //Best - O(n + k), Avg - O(n + k), Worst - O(n^2)
+            int B[N];
+            for (int i = 0; i < N; i++) B[i] = A[i];
+            
+            printf("\n");
+            char wish = 'a';
+            while(wish != 'Y' && wish != 'y' && wish != 'N' && wish != 'n') {
+                printf("Do you wish to calculate the time taken? (Y/N): ");
+                scanf(" %c", &wish);
+                
+                if (wish == 'Y' || wish == 'y') {
+                    t = clock();
+                } else if (wish == 'N' || wish == 'n') {
+                    break;
+                } else printf("Wrong Input! Enter again.\n\n");
+            }
+            
+            //Bucket Sort Commencement
+            //Identifying the number of buckets required
+            int nBuckets = (int) ceil(sqrt((double) N)); //optimal number of buckets
+            
+            //Finding max and min item
+            int m = INT_MAX;
+            int M = INT_MIN;
+            for (int i = 0; i < N; i++) {
+                if (B[i] < m) m = B[i];
+                if (B[i] > M) M = B[i];
+            }
+            double range = (double) (M-m)/nBuckets;
+            
+            //nBucket queues initialised
+            struct Node* head[nBuckets];
+            for (int i = 0; i < nBuckets; i++) head[i] = NULL;
+            struct Node* tail[nBuckets];
+            for (int i = 0; i < nBuckets; i++) tail[i] = NULL;
+            
+            //If range == 0, the array is already sorted
+            if (range) {
+                //Scatter
+                for (int i = 0; i < N; i++) {
+                    double idx = (double) (B[i]-m)/range;
+                    int idx_t = (B[i] - m)/range;
+                    if (idx == idx_t && B[i] != m) idx_t--;
+                
+                    enQueue(&head[idx_t], &tail[idx_t], B[i]);
+                }
+                
+                //Sorting the buckets - Insertion Sort
+                struct Node* sorted[nBuckets];
+                for (int i = 0; i < nBuckets; i++) sorted[i] = NULL;
+                for (int i = 0; i < nBuckets; i++) {
+                    if (head[i] != NULL) insertionSort(&head[i], &sorted[i]);
+                }
+                
+                //Gather
+                int idx = 0;
+                for (int i = 0; i < nBuckets; i++) {
+                    if (head[i] != NULL) {
+                        struct Node* current = head[i];
+                        while(current != NULL) {
+                            B[idx] = current->data;
+                            current = current->next;
+                            idx++;
+                        }
+                    }
+                }
+                
+                //check for 1 item waala case
+            }
+            
+            //Bucket Sort Conclusion
+            
+            if (wish == 'y' || wish == 'Y') {
+                t = clock() - t;
+                time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+                printf("Time Taken: %lf\n", time_taken);
+            }
+            
+            if (range) {
+                printf("\n");
+                wish = 'a';
+                while(wish != 'Y' && wish != 'y' && wish != 'N' && wish != 'n') {
+                    printf("Do you wish to view the sorted bucket queues? (Y/N): ");
+                    scanf(" %c", &wish);
+                
+                    if (wish == 'Y' || wish == 'y') {
+                        for (int i = 0; i < nBuckets; i++) display(&head[i], i);
+                    } else if (wish == 'N' || wish == 'n') {
+                        break;
+                    } else printf("Wrong Input! Enter again.\n\n");
+                }
+            }
+            
+            printf("\n");
+            view = 'a';
+            while(view != 'Y' && view != 'y' && view != 'N' && view != 'n') {
+                printf("Do you want to view the sorted array? (Y/N): ");
+                scanf(" %c", &view);
+                
+                if (view == 'Y' || view == 'y') {
+                    printf("\nBucket Sort -> Sorted Array: \n");
+                    for (int i = 0; i < N; i++) printf("%d ", B[i]);
+                    printf("\n");
+                } else if (view == 'N' || view == 'n') {
+                    break;
+                } else printf("Wrong Input! Enter again.\n\n");
+            }
+        } else if (choice == 'N' || choice == 'n') break;
+        else printf("Wrong Input! Enter again.\n\n");
+    }
+    
+    printf("\n-----ALL TASKS REVIEWED-----\n");
 }

@@ -312,7 +312,7 @@ int main() {
                 //Scatter
                 for (int i = 0; i < N; i++) {
                     double idx = (double) (B[i]-m)/range;
-                    int idx_t = (B[i] - m)/range;
+                    int idx_t = (B[i]-m)/range;
                     if (idx == idx_t && B[i] != m) idx_t--;
                 
                     enQueue(&head[idx_t], &tail[idx_t], B[i]);

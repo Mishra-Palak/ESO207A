@@ -80,7 +80,7 @@ void randomNumberGenerator(int N) {
     
     srand(time(0));
     for (int i = 0; i < N; i++) {
-        int x = rand()%1000000; //0 to 9999
+        int x = rand()%1000000; //0 to 999999
         fprintf(random, "%d ", x);
     }
     

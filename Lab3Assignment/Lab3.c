@@ -301,7 +301,7 @@ int main() {
             }
             double range = (double) (M-m)/nBuckets;
             
-            //nBucket queues initialised
+            //nBuckets queues initialised
             struct Node* head[nBuckets];
             for (int i = 0; i < nBuckets; i++) head[i] = NULL;
             struct Node* tail[nBuckets];

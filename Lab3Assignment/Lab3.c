@@ -155,7 +155,8 @@ int main() {
             if (wish == 'Y' || wish == 'y') {
                 t = clock() - t;
                 time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-                printf("Time Taken: %lf\n", time_taken);
+                if (time_taken > 180) printf("Time exceeds 3 minutes.\n");
+                else printf("Time Taken: %lf\n", time_taken);
             }
             
             printf("\n");
@@ -241,7 +242,8 @@ int main() {
             if (wish == 'Y' || wish == 'y') {
                 t = clock() - t;
                 time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-                printf("Time Taken: %lf\n", time_taken);
+                if (time_taken > 180) printf("Time exceeds 3 minutes.\n");
+                else printf("Time Taken: %lf\n", time_taken);
             }
             
             printf("\n");
@@ -344,7 +346,8 @@ int main() {
             if (wish == 'Y' || wish == 'y') {
                 t = clock() - t;
                 time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-                printf("Time Taken: %lf\n", time_taken);
+                if (time_taken > 180) printf("Time exceeds 3 minutes.\n");
+                else printf("Time Taken: %lf\n", time_taken);
             }
             
             if (range) {

@@ -152,7 +152,7 @@ int main() {
             }
             //Insertion Sort Conclusion
             
-            if (wish == 'y' || wish == 'Y') {
+            if (wish == 'Y' || wish == 'y') {
                 t = clock() - t;
                 time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
                 printf("Time Taken: %lf\n", time_taken);
@@ -238,7 +238,7 @@ int main() {
             
             //Heap Sort Conclusion
             
-            if (wish == 'y' || wish == 'Y') {
+            if (wish == 'Y' || wish == 'y') {
                 t = clock() - t;
                 time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
                 printf("Time Taken: %lf\n", time_taken);

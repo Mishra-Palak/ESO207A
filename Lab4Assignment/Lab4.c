@@ -6,7 +6,7 @@
 int rearrange(int A[], int start, int end) {
     int p = A[end];
     int i = start-1;
-    for (int j = start; j <= end-1; j++) {
+    for (int j = start; j < end; j++) {
         if (A[j] <= p) {
             i++;
             
@@ -34,7 +34,6 @@ int pivotGeneration(int A[], int low, int high) {
         A[pivot] = A[high];
         A[high] = temp;
     }
-    
     return rearrange(A, low, high);
 }
 

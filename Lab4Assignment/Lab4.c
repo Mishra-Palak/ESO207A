@@ -50,32 +50,32 @@ void merge(int A[], int l, int m, int r) {
     int N1 = m-l+1;
     int N2 = r-m;
     int L[N1], R[N2];
-    for (int j = 0; j < N1; j++) L[j] = A[l+j];
-    for (int j = 0; j < N2; j++) R[j] = A[m+j+1];
+    for (int i = 0; i < N1; i++) L[i] = A[l+i];
+    for (int i = 0; i < N2; i++) R[i] = A[m+i+1];
                     
     //merge
-    int idx1 = 0, idx2 = 0, idx3 = l;
-    while(idx1 < N1 && idx2 < N2) {
-        if (L[idx1] <= R[idx2]) {
-            A[idx3] = L[idx1];
-            idx1++;
+    int i = 0, j = 0, k = l;
+    while(i < N1 && j < N2) {
+        if (L[i] <= R[j]) {
+            A[k] = L[i];
+            i++;
         } else {
-            A[idx3] = R[idx2];
-            idx2++;
+            A[k] = R[j];
+            j++;
         }
-        idx3++;
+        k++;
     }
                     
-    while(idx1 < N1) {
-        A[idx3] = L[idx1];
-        idx1++;
-        idx3++;
+    while(i < N1) {
+        A[k] = L[i];
+        i++;
+        k++;
     }
                     
-    while(idx2 < N2) {
-        A[idx3] = R[idx2];
-        idx2++;
-        idx3++;
+    while(j < N2) {
+        A[k] = R[j];
+        j++;
+        k++;
     }
 }
 
@@ -117,11 +117,12 @@ int main() {
     printf("-----ARRAY GENERATION-----\n");
     int N = -1;
     while(N < 0) {
-        printf("\nEnter the length of the array: ");
+        printf("Enter the array length: ");
         scanf("%d", &N);
         
         if (N >= 0) randomNumberGenerator(N);
         else printf("Kindly re-enter the number.\n");
+        printf("\n");
     }
     
     FILE * random = fopen("random.txt", "r");
@@ -129,7 +130,6 @@ int main() {
     for (int i = 0; i < N; i++) fscanf(random, "%d", &A[i]);
     fclose(random);
     
-    printf("\n");
     char view = 'a';
     while(view != 'Y' && view != 'y' && view != 'N' && view != 'n') {
         printf("Do you want to view the array of the generated integers? (Y/N): ");
@@ -207,7 +207,7 @@ int main() {
             clock_t t;
             double time_taken;
             printf("\n-----ITERATIVE MERGE SORT-----\n"); //Best - O(nlogn), Avg - O(nlogn), Worst - O(nlogn)
-            int B[N];
+            int* B = (int*)malloc(N*sizeof(int));
             for (int i = 0; i < N; i++) B[i] = A[i];
             
             printf("\n");
@@ -241,28 +241,28 @@ int main() {
                     for (int j = 0; j < N2; j++) R[j] = B[m+j+1];
                     
                     //merge
-                    int idx1 = 0, idx2 = 0, idx3 = l;
-                    while(idx1 < N1 && idx2 < N2) {
-                        if (L[idx1] <= R[idx2]) {
-                            B[idx3] = L[idx1];
-                            idx1++;
+                    int i1 = 0, i2 = 0, i3 = l;
+                    while(i1 < N1 && i2 < N2) {
+                        if (L[i1] <= R[i2]) {
+                            B[i3] = L[i1];
+                            i1++;
                         } else {
-                            B[idx3] = R[idx2];
-                            idx2++;
+                            B[i3] = R[i2];
+                            i2++;
                         }
-                        idx3++;
+                        i3++;
                     }
                     
-                    while(idx1 < N1) {
-                        B[idx3] = L[idx1];
-                        idx1++;
-                        idx3++;
+                    while(i1 < N1) {
+                        B[i3] = L[i1];
+                        i1++;
+                        i3++;
                     }
                     
-                    while(idx2 < N2) {
-                        B[idx3] = R[idx2];
-                        idx2++;
-                        idx3++;
+                    while(i2 < N2) {
+                        B[i3] = R[i2];
+                        i2++;
+                        i3++;
                     }
                 }
             }
@@ -303,7 +303,7 @@ int main() {
             clock_t t;
             double time_taken;
             printf("\n-----RECURSIVE MERGE SORT-----\n"); //Best - O(nlogn), Avg - O(nlogn), Worst - O(nlogn)
-            int B[N];
+            int* B = (int*)malloc(N*sizeof(int));
             for (int i = 0; i < N; i++) B[i] = A[i];
             
             printf("\n");

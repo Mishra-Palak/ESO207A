@@ -166,14 +166,16 @@ int main() {
             int item;
             printf("Enter the item: ");
             scanf("%d", &item);
-            if (search(root, item)->key == item) {
+            Node* t = search(root, item);
+            if (t != NULL) {
                 printf("Item found.\n");
             } else printf("Item not found!\n");
         } else if (choice == 3) {
             int item;
             printf("Enter the item: ");
             scanf("%d", &item);
-            if (search(root, item)->key == item) {
+            Node* t = search(root, item);
+            if (t != NULL) {
                 root = delete(root, item);
             } else printf("Item not found!\n");
         }

@@ -2,13 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-struct Node {
-    int data;
-    struct Node* left;
-    struct Node* right;
-};
-
-struct Node* root = NULL;
+int r;
 
 void randomNumberGenerator(int N) {
     FILE * random = fopen("random.txt", "w");
@@ -22,166 +16,134 @@ void randomNumberGenerator(int N) {
     fclose(random);
 }
 
-void insert(int val) {
-    struct Node* newN = (struct Node*)malloc(sizeof(struct Node));
-    newN->data = val;
-    newN->left = NULL;
-    newN->right = NULL;
-    
-    if (root == NULL) root = newN;
-    else {
-        struct Node* temp = root;
-        struct Node* prev = NULL;
-        
-        while (temp != NULL) {
-            prev = temp;
-            if (val > temp->data) {
-                temp = temp->right;
-            } else {
-                temp = temp->left;
+int parent(int node) {
+    if (node%r == 0) return (node-1)/r;
+    return node/r;
+}
+
+int child(int node, int index) {
+    return (r*(node)+index);
+}
+
+void swap(int* a, int* b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void minHeapify(int a[], int i, int size) {
+    int largest = i;
+    for(int j = 1; j <= r; j++){
+        int b = child(i, j);
+        if(b <= size-1 && a[b] < a[i]){
+            if(a[b] <= a[largest]){
+                largest = b;
             }
         }
-        
-        if (val > prev->data) {
-            prev->right = newN;
-        } else {
-            prev->left = newN;
-        }
+    }
+    if(largest != i) {
+        swap(&a[i], &a[largest]);
+        minHeapify(a,largest,size);
     }
 }
 
-int search(int key) {
-    struct Node* temp = root;
-    
-    while (temp != NULL) {
-        if (key == temp->data) {
-            return 1;
-        } else if (key > temp->data) {
-            temp = temp->right;
-        } else {
-            temp = temp->left;
-        }
+void buildHeap(int a[], int size) {
+    int ind = (size/2)-1;
+    for(int i = ind; i >= 0; i--){
+        minHeapify(a,i,size);
     }
-    
-    return 0;
 }
 
-struct Node* minimum(struct Node* root) {
-    struct Node* curr = root;
-    while (curr != NULL && curr->left != NULL) {
-        curr = curr->left;
-    }
-    
-    return curr;
+void printArray(int a[], int size) {
+    for(int i = 0; i < size; i++) printf("%d ", a[i]);
+    printf("\n");
 }
 
-struct Node* deleteN(struct Node* root, int key) {
-    if (root == NULL) return root;
-    
-    if (key < root->data) {
-        root->left = deleteN(root->left, key);
-    } else if (key > root->data) {
-        root->right = deleteN(root->right, key);
-    } else {
-        if (root->left == NULL) {
-            struct Node* temp = root->right;
-            free(root);
-            return temp;
-        } else if (root->right == NULL) {
-            struct Node* temp = root->left;
-            free(root);
-            return temp;
-        }
-        
-        struct Node* temp = minimum(root->right);
-        root->data = temp->data;
-        root->right = deleteN(root->right, temp->data);
+void insert(int a[], int key, int size) {
+    size++;
+    a[size-1] = key;
+    int i = size-1;
+    while(i > 0 && a[parent(i)] < a[i]) {
+        swap(&a[i], &a[parent(i)]);
+        i = parent(i);
     }
-    
-    return root;
 }
 
-void inorder(struct Node* root) {
-    if (root == NULL) return;
-    
-    inorder(root->left);
-    printf("%d ",  root->data);
-    inorder(root->right);
+void reduceKey(int a[], int key, int i, int size){
+    if(key > a[i]) {
+        printf("The new key is greater.\n");
+        return;
+    }
+    a[i] = key;
+    buildHeap(a, size);
+}
+
+void deleteMin(int a[], int size){
+    printf("Deleted: %d\n",a[0]);
+    size--;
+    swap(&a[0], &a[size]);
+    buildHeap(a,size);
 }
 
 int main() {
-    printf("-----BINARY SEARCH TREE-----\n");
+    printf("-----MINIMUM PRIORITY QUEUE-----\n");
+    printf("Enter the value of r: ");
+    scanf("%d", &r);
     
-    int N;
+    int a[10000];
+    int size;
     printf("\n-----Insert-----\n");
     printf("Enter the number of nodes: ");
-    scanf("%d", &N);
-    randomNumberGenerator(N);
+    scanf("%d", &size);
+    randomNumberGenerator(size);
             
     FILE * random = fopen("random.txt", "r");
             
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < size; i++) {
         int val;
         fscanf(random, "%d", &val);
-        insert(val);
+        insert(a, val, i);
     }
+    buildHeap(a, size);
             
     fclose(random);
     printf("\nNodes inserted.\n");
-    printf("\nInorder Traversal: \n");
-    inorder(root);
+    printf("\nPriority Queue: \n");
+    printArray(a, size);
     
-    printf("\n\n-----Search-----\n");
+    printf("\n-----Reduce Key-----\n");
     char choice = 'a';
     while(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n') {
-        printf("\nDo you want to search a key? (Y/N): ");
+        printf("\nDo you want to reduce a key value? (Y/N): ");
         scanf(" %c", &choice);
         
         if (choice == 'Y' || choice == 'y') {
-            int key;
-            printf("\nEnter data: ");
+            int i, key;
+            printf("Enter the index: ");
+            scanf("%d", &i);
+            printf("\nEnter the new value: ");
             scanf("%d", &key);
             
-            if(search(key)) printf("\nData found!\n");
-            else printf("\nData not found!\n");
+            reduceKey(a, key, i, size);
             
             choice = 'a';
         } else if (choice == 'N' || choice == 'n') break;
         else printf("Wrong Input. Enter again.\n\n");
     }
+    printf("\nPriority Queue: \n");
+    printArray(a, size);
     
-    printf("\n-----Delete-----\n");
-    choice = 'a';
-    while(choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n') {
-        printf("\nDo you want to delete a node? (Y/N): ");
-        scanf(" %c", &choice);
-        
-        if (choice == 'Y' || choice == 'y') {
-            int val;
-            printf("\nEnter data: ");
-            scanf("%d", &val);
-            
-            if(search(val)) {
-                root = deleteN(root, val);
-                N--;
-                printf("Node deleted.\n");
-            } else printf("\nData not found!\n");
-            
-            choice = 'a';
-        } else if (choice == 'N' || choice == 'n') break;
-        else printf("Wrong Input. Enter again.\n\n");
+    printf("\n-----Delete Min-----\n");
+    int n;
+    if (size < 1000) n = size;
+    else n = 1000;
+    for(int i = 0; i < n; i++){
+        printf("%d. ", i+1);
+        deleteMin(a, size);
+        size--;
     }
-    printf("\nInorder Traversal: \n");
-    inorder(root);
-    
-    printf("\n\n-----Delete Min-----\n");
-    int n = 0;
-    while(n < 1000 && n < N) {
-        int min = (minimum(root))->data;
-        printf("%d. Deleted: %d\n", n+1, min);
-        deleteN(root, min);
-        n++;
-    }
-    printf("\nInorder Traversal: \n");
-    inorder(root);
+    if (size > 0) {
+        printf("\nPriority Queue: \n");
+        printArray(a, size-1000);
+    } else printf("\nEmpty Priority Queue.\n");
 }
